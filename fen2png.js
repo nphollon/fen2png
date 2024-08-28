@@ -5,7 +5,24 @@ function main() {
 }
 
 function parseFEN() {
-  return;
+  return [
+    { name: 'r', x: '0', y: '0' },
+    { name: 'n', x: '1', y: '0' },
+    { name: 'b', x: '2', y: '0' },
+    { name: 'q', x: '3', y: '0' },
+    { name: 'k', x: '4', y: '0' },
+    { name: 'b', x: '5', y: '0' },
+    { name: 'n', x: '6', y: '0' },
+    { name: 'r', x: '7', y: '0' },
+    { name: 'R', x: '0', y: '7' },
+    { name: 'N', x: '1', y: '7' },
+    { name: 'B', x: '2', y: '7' },
+    { name: 'Q', x: '3', y: '7' },
+    { name: 'K', x: '4', y: '7' },
+    { name: 'B', x: '5', y: '7' },
+    { name: 'N', x: '6', y: '7' },
+    { name: 'R', x: '7', y: '7' },
+  ];
 }
 
 function draw(boardState) {
@@ -58,17 +75,31 @@ function drawBoard(ctx) {
 }
 
 function placePieces(ctx, images, boardState) {
-  ctx.drawImage(images["bB"], 0, 0, 1, 1);
-  ctx.drawImage(images["bB"], 3, 4, 1, 1);
+  boardState.forEach((piece) => {
+    ctx.drawImage(images[piece.name], piece.x, piece.y, 1, 1);
+  })
 }
 
 function loadPieceImages() {
   return new Promise((resolve) => {
-    const pieceType = "companion";
-    const pieceNames = [ "bP", "bN", "bB", "bR", "bQ", "bK", "wP", "wN", "wB", "wR", "wQ", "wK" ];
-    const images = {};
+    const theme = "companion";
+    const pieceFiles = {
+      'B': 'wB',
+      'K': 'wK',
+      'N': 'wN',
+      'P': 'wP',
+      'Q': 'wQ',
+      'R': 'wR',
+      'b': 'bB',
+      'k': 'bK',
+      'n': 'bN',
+      'p': 'bP',
+      'q': 'bQ',
+      'r': 'bR',
+    }
 
-    let loadingImages = pieceNames.length;
+    const images = {};
+    let loadingImages = Object.keys(pieceFiles).length;
 
     function onLoad() {
       loadingImages--;
@@ -77,12 +108,13 @@ function loadPieceImages() {
       }
     }
 
-    pieceNames.forEach((piece) => {
+    Object.entries(pieceFiles).forEach((entry) => {
+      const key = entry[0];
       const img = new Image();
       img.addEventListener("load", onLoad);
-      img.src = `images/piece/${pieceType}/${piece}.svg`;
-      images[piece] = img;
-    });
+      img.src = `images/piece/${theme}/${entry[1]}.svg`;
+      images[key] = img;
+    })
   });
 }
 
