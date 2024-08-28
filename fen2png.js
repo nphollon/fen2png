@@ -43,7 +43,7 @@ function draw(boardState) {
 }
 
 function drawBoard(ctx) {
-  const darkFillBackground = "#4D3848"
+  const darkFillBackground = "#9E728E"
   const darkFillForeground = "#74586A";
   const lineDensity = 120;
   const lineWidth = 2/30;
