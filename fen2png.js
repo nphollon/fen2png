@@ -1,16 +1,26 @@
 function main() {
-  const sq = 60;
-  const canvas = document.getElementById("board-canvas");
-  canvas.width = 8*sq;
-  canvas.height = 8*sq;
-  canvas.style.border = "1px solid black";
+  const fen = "";
+  const boardState = parseFEN(fen);
+  draw(boardState).then(download);
+}
 
-  const ctx = canvas.getContext("2d");
-  ctx.scale(sq, sq);
-  drawBoard(ctx);
-  drawPieces(ctx);
+function parseFEN() {
+  return;
+}
 
-  console.log(canvas.toDataURL());
+function draw() {
+  return new Promise((resolve, reject) => {
+    const sq = 60;
+    const canvas = document.getElementById("board-canvas");
+    canvas.width = 8*sq;
+    canvas.height = 8*sq;
+    canvas.style.border = "1px solid black";
+
+    const ctx = canvas.getContext("2d");
+    ctx.scale(sq, sq);
+    drawBoard(ctx);
+    drawPieces(ctx, () => resolve(canvas));
+  });
 }
 
 function drawBoard(ctx) {
@@ -45,17 +55,32 @@ function drawBoard(ctx) {
   }
 }
 
-function drawPieces(ctx) {
-  pieceType = "companion";
-  const img = new Image();
+function drawPieces(ctx, callback) {
+  const pieceType = "companion";
+  const pieces = [ "bP", "bN", "bB", "bR", "bQ", "bK", "wP", "wN", "wB", "wR", "wQ", "wK" ];
+  const images = {};
 
-  img.addEventListener("load", () => {
-    ctx.drawImage(img, 0, 0, 1, 1);
+  let loadingImages = pieces.length;
 
-    ctx.drawImage(img, 3, 4, 1, 1);
-    console.log(canvas.toDataURL());
-  });
-  img.src = `images/piece/${pieceType}/bB.svg`;
+  function onLoad() {
+    loadingImages--;
+    if (loadingImages <= 0) {
+      ctx.drawImage(images["bB"], 0, 0, 1, 1);
+      ctx.drawImage(images["bB"], 3, 4, 1, 1);
+      callback();
+    }
+  }
+
+  pieces.forEach((piece) => {
+    const img = new Image();
+    img.addEventListener("load", onLoad);
+    img.src = `images/piece/${pieceType}/${piece}.svg`;
+    images[piece] = img;
+  })
+}
+
+function download(canvas) {
+  console.log(canvas.toDataURL());
 }
 
 main();
