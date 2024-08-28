@@ -44,9 +44,9 @@ function draw(boardState) {
 
 function drawBoard(ctx) {
   const darkFillBackground = "#9E728E"
-  const darkFillForeground = "#74586A";
+  const darkFillForeground = "#4D3848";
   const lineDensity = 120;
-  const lineWidth = 2/30;
+  const lineWidth = 3/60;
   const lightFill = "#FFDCBD";
 
   ctx.fillStyle = darkFillBackground;
@@ -82,7 +82,7 @@ function placePieces(ctx, images, boardState) {
 
 function loadPieceImages() {
   return new Promise((resolve) => {
-    const theme = "companion";
+    const theme = "alpha";
     const pieceFiles = {
       'B': 'wB',
       'K': 'wK',
