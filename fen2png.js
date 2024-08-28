@@ -8,18 +8,20 @@ function parseFEN() {
   return;
 }
 
-function draw() {
+function draw(boardState) {
   return new Promise((resolve, reject) => {
-    const sq = 60;
-    const canvas = document.getElementById("board-canvas");
-    canvas.width = 8*sq;
-    canvas.height = 8*sq;
-    canvas.style.border = "1px solid black";
+    loadPieceImages().then((pieces) => {
+      const sq = 60;
+      const canvas = document.getElementById("board-canvas");
+      canvas.width = 8*sq;
+      canvas.height = 8*sq;
+      const ctx = canvas.getContext("2d");
+      ctx.scale(sq, sq);
 
-    const ctx = canvas.getContext("2d");
-    ctx.scale(sq, sq);
-    drawBoard(ctx);
-    drawPieces(ctx, () => resolve(canvas));
+      drawBoard(ctx);
+      placePieces(ctx, pieces, boardState);
+      resolve(canvas);
+    });
   });
 }
 
@@ -55,28 +57,33 @@ function drawBoard(ctx) {
   }
 }
 
-function drawPieces(ctx, callback) {
-  const pieceType = "companion";
-  const pieces = [ "bP", "bN", "bB", "bR", "bQ", "bK", "wP", "wN", "wB", "wR", "wQ", "wK" ];
-  const images = {};
+function placePieces(ctx, images, boardState) {
+  ctx.drawImage(images["bB"], 0, 0, 1, 1);
+  ctx.drawImage(images["bB"], 3, 4, 1, 1);
+}
 
-  let loadingImages = pieces.length;
+function loadPieceImages() {
+  return new Promise((resolve) => {
+    const pieceType = "companion";
+    const pieceNames = [ "bP", "bN", "bB", "bR", "bQ", "bK", "wP", "wN", "wB", "wR", "wQ", "wK" ];
+    const images = {};
 
-  function onLoad() {
-    loadingImages--;
-    if (loadingImages <= 0) {
-      ctx.drawImage(images["bB"], 0, 0, 1, 1);
-      ctx.drawImage(images["bB"], 3, 4, 1, 1);
-      callback();
+    let loadingImages = pieceNames.length;
+
+    function onLoad() {
+      loadingImages--;
+      if (loadingImages <= 0) {
+        resolve(images);
+      }
     }
-  }
 
-  pieces.forEach((piece) => {
-    const img = new Image();
-    img.addEventListener("load", onLoad);
-    img.src = `images/piece/${pieceType}/${piece}.svg`;
-    images[piece] = img;
-  })
+    pieceNames.forEach((piece) => {
+      const img = new Image();
+      img.addEventListener("load", onLoad);
+      img.src = `images/piece/${pieceType}/${piece}.svg`;
+      images[piece] = img;
+    });
+  });
 }
 
 function download(canvas) {
