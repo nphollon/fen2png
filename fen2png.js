@@ -2,7 +2,7 @@ function main() {
   const form = document.getElementById("fen-form");
   const fenField = document.getElementById("fen-input");
   const submit = document.getElementById("fen-submit");
-  const downloadButton = document.getElementById("download-button");
+  const downloadLink = document.getElementById("download-link");
   const canvas = document.getElementById("board-canvas");
 
   let images;
@@ -11,17 +11,16 @@ function main() {
     event.preventDefault();
     const boardState = parseFen(fenField.value);
     draw(canvas, images, boardState);
-    downloadButton.disabled = false;
-  });
 
-  downloadButton.addEventListener("click", () => {
-    download(canvas);
+    downloadLink.hidden = false;
+    downloadLink.download = "a.png";
+    downloadLink.href = canvas.toDataURL();
   });
 
   loadPieceImages().then((data) => {
     images = data;
     submit.disabled = false;
-  })
+  });
 }
 
 function parseFen(fen) {
@@ -66,11 +65,13 @@ function parseFen(fen) {
 
 function draw(canvas, images, boardState) {
   const sq = 60;
-  canvas.width = 10*sq;
-  canvas.height = 10*sq;
+  canvas.width = 9.5*sq;
+  canvas.height = 9*sq;
   const ctx = canvas.getContext("2d");
   ctx.scale(sq, sq);
-  ctx.translate(1, 1);
+  ctx.fillStyle = "white";
+  ctx.fillRect(-10, -10, 20, 20);
+  ctx.translate(0.5, 0.5);
 
   drawBoard(ctx);
   drawTurnIndicator(ctx, boardState.whiteToMove);
@@ -178,10 +179,6 @@ function loadPieceImages() {
       images[key] = img;
     })
   });
-}
-
-function download(canvas) {
-  console.log(canvas.toDataURL());
 }
 
 main();
