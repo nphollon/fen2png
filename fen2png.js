@@ -1,33 +1,52 @@
 function main() {
-  const fen = "";
-  const boardState = parseFEN(fen);
+  const fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+  const boardState = parseFen(fen);
   draw(boardState).then(download);
 }
 
-function parseFEN() {
-  return [
-    { name: 'r', x: '0', y: '0' },
-    { name: 'n', x: '1', y: '0' },
-    { name: 'b', x: '2', y: '0' },
-    { name: 'q', x: '3', y: '0' },
-    { name: 'k', x: '4', y: '0' },
-    { name: 'b', x: '5', y: '0' },
-    { name: 'n', x: '6', y: '0' },
-    { name: 'r', x: '7', y: '0' },
-    { name: 'R', x: '0', y: '7' },
-    { name: 'N', x: '1', y: '7' },
-    { name: 'B', x: '2', y: '7' },
-    { name: 'Q', x: '3', y: '7' },
-    { name: 'K', x: '4', y: '7' },
-    { name: 'B', x: '5', y: '7' },
-    { name: 'N', x: '6', y: '7' },
-    { name: 'R', x: '7', y: '7' },
-  ];
+function parseFen(fen) {
+  const pieces = [];
+
+  let x = 0;
+  let y = 0;
+
+  let i;
+  for (i = 0; i < fen.length; i++) {
+    const char = fen[i];
+    if (char === ' ') {
+      break;
+    }
+    if (char === '/') {
+      x = 0;
+      y++;
+      continue;
+    }
+    const spacing = parseInt(char);
+    if (Number.isInteger(spacing)) {
+      x += spacing;
+      continue;
+    }
+    pieces.push({  name: char,  x: x, y: y });
+    x++;
+  }
+
+  let whiteToMove = true;
+
+  if (i + 1 < fen.length) {
+    const moveToken = fen[i + 1];
+    if (moveToken === 'b' || moveToken === 'B') {
+      whiteToMove = false;
+    } else if (moveToken !== 'w' && moveToken !== 'W') {
+      throw new Error(`move token "${moveToken}" is not recognized`);
+    }
+  }
+
+  return { pieces, whiteToMove };
 }
 
 function draw(boardState) {
   return new Promise((resolve, reject) => {
-    loadPieceImages().then((pieces) => {
+    loadPieceImages().then((images) => {
       const sq = 60;
       const canvas = document.getElementById("board-canvas");
       canvas.width = 8*sq;
@@ -36,7 +55,7 @@ function draw(boardState) {
       ctx.scale(sq, sq);
 
       drawBoard(ctx);
-      placePieces(ctx, pieces, boardState);
+      placePieces(ctx, images, boardState.pieces);
       resolve(canvas);
     });
   });
