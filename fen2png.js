@@ -1,11 +1,27 @@
 function main() {
   const form = document.getElementById("fen-form");
   const fenField = document.getElementById("fen-input");
+  const submit = document.getElementById("fen-submit");
+  const downloadButton = document.getElementById("download-button");
+  const canvas = document.getElementById("board-canvas");
+
+  let images;
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const boardState = parseFen(fenField.value);
-    draw(boardState).then(download);
+    draw(canvas, images, boardState);
+    downloadButton.disabled = false;
   });
+
+  downloadButton.addEventListener("click", () => {
+    download(canvas);
+  });
+
+  loadPieceImages().then((data) => {
+    images = data;
+    submit.disabled = false;
+  })
 }
 
 function parseFen(fen) {
@@ -48,23 +64,17 @@ function parseFen(fen) {
   return { pieces, whiteToMove };
 }
 
-function draw(boardState) {
-  return new Promise((resolve, reject) => {
-    loadPieceImages().then((images) => {
-      const sq = 60;
-      const canvas = document.getElementById("board-canvas");
-      canvas.width = 10*sq;
-      canvas.height = 10*sq;
-      const ctx = canvas.getContext("2d");
-      ctx.scale(sq, sq);
-      ctx.translate(1, 1);
+function draw(canvas, images, boardState) {
+  const sq = 60;
+  canvas.width = 10*sq;
+  canvas.height = 10*sq;
+  const ctx = canvas.getContext("2d");
+  ctx.scale(sq, sq);
+  ctx.translate(1, 1);
 
-      drawBoard(ctx);
-      drawTurnIndicator(ctx, boardState.whiteToMove);
-      placePieces(ctx, images, boardState);
-      resolve(canvas);
-    });
-  });
+  drawBoard(ctx);
+  drawTurnIndicator(ctx, boardState.whiteToMove);
+  placePieces(ctx, images, boardState);
 }
 
 function drawBoard(ctx) {
