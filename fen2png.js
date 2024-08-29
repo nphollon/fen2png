@@ -49,24 +49,30 @@ function draw(boardState) {
     loadPieceImages().then((images) => {
       const sq = 60;
       const canvas = document.getElementById("board-canvas");
-      canvas.width = 8*sq;
-      canvas.height = 8*sq;
+      canvas.width = 10*sq;
+      canvas.height = 10*sq;
       const ctx = canvas.getContext("2d");
       ctx.scale(sq, sq);
+      ctx.translate(1, 1);
 
       drawBoard(ctx);
-      placePieces(ctx, images, boardState.pieces);
+      drawTurnIndicator(ctx, boardState.whiteToMove);
+      placePieces(ctx, images, boardState);
       resolve(canvas);
     });
   });
 }
 
 function drawBoard(ctx) {
-  const darkFillBackground = "#9E728E"
-  const darkFillForeground = "#4D3848";
+  const darkFillBackground = "#AAA";
+  const darkFillForeground = "#444";
   const lineDensity = 120;
   const lineWidth = 3/60;
-  const lightFill = "#FFDCBD";
+  const lightFill = "#DDD";
+  const borderWidth = 0.1;
+
+  ctx.fillStyle = darkFillForeground;
+  ctx.fillRect(-borderWidth, -borderWidth, 8+2*borderWidth, 8+2*borderWidth);
 
   ctx.fillStyle = darkFillBackground;
   ctx.fillRect(0, 0, 8, 8);
@@ -77,8 +83,14 @@ function drawBoard(ctx) {
   for (let i = 0; i < lineDensity; i++) {
     ctx.beginPath();
     ctx.lineWidth = (20 + i) * lineWidth / lineDensity;
-    ctx.moveTo(i * dx, 0);
-    ctx.lineTo(0, i * dx);
+
+    if (i * dx < 8) {
+      ctx.moveTo(0, i * dx);
+      ctx.lineTo(i * dx, 0);
+    } else {
+      ctx.moveTo(i * dx - 8, 8);
+      ctx.lineTo(8, i * dx - 8);
+    }
     ctx.stroke();
   }
 
@@ -93,9 +105,25 @@ function drawBoard(ctx) {
   }
 }
 
+function drawTurnIndicator(ctx, whiteToMove) {
+  ctx.beginPath();
+  ctx.moveTo(8.4, 7.5);
+  ctx.lineTo(8.6, 6.9);
+  ctx.lineTo(8.8, 7.5);
+  ctx.closePath();
+
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 0.09;
+  ctx.stroke();
+
+  ctx.fillStyle = whiteToMove ? "white" : "black";
+  ctx.fill();
+}
+
 function placePieces(ctx, images, boardState) {
-  boardState.forEach((piece) => {
-    ctx.drawImage(images[piece.name], piece.x, piece.y, 1, 1);
+  const orient = boardState.whiteToMove ? (c => c) : (c => 7 - c);
+  boardState.pieces.forEach((piece) => {
+    ctx.drawImage(images[piece.name], orient(piece.x), orient(piece.y), 1, 1);
   })
 }
 
