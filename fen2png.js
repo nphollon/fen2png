@@ -1,7 +1,11 @@
 function main() {
-  const fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-  const boardState = parseFen(fen);
-  draw(boardState).then(download);
+  const form = document.getElementById("fen-form");
+  const fenField = document.getElementById("fen-input");
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const boardState = parseFen(fenField.value);
+    draw(boardState).then(download);
+  });
 }
 
 function parseFen(fen) {
