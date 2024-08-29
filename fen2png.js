@@ -64,12 +64,12 @@ function draw(boardState) {
 }
 
 function drawBoard(ctx) {
-  const darkFillBackground = "#AAA";
+  const darkFillBackground = "#EEE";
   const darkFillForeground = "#444";
-  const lineDensity = 120;
-  const lineWidth = 3/60;
-  const lightFill = "#DDD";
-  const borderWidth = 0.1;
+  const lineDensity = 180;
+  const lineWidth = 0.025;
+  const lightFill = "#EEE";
+  const borderWidth = 0.05;
 
   ctx.fillStyle = darkFillForeground;
   ctx.fillRect(-borderWidth, -borderWidth, 8+2*borderWidth, 8+2*borderWidth);
@@ -80,9 +80,10 @@ function drawBoard(ctx) {
   ctx.strokeStyle = darkFillForeground;
   const dx = 16 / lineDensity;
 
+  ctx.lineWidth = lineWidth;
+
   for (let i = 0; i < lineDensity; i++) {
     ctx.beginPath();
-    ctx.lineWidth = (20 + i) * lineWidth / lineDensity;
 
     if (i * dx < 8) {
       ctx.moveTo(0, i * dx);
@@ -113,7 +114,7 @@ function drawTurnIndicator(ctx, whiteToMove) {
   ctx.closePath();
 
   ctx.strokeStyle = "black";
-  ctx.lineWidth = 0.09;
+  ctx.lineWidth = 0.08;
   ctx.stroke();
 
   ctx.fillStyle = whiteToMove ? "white" : "black";
@@ -129,7 +130,7 @@ function placePieces(ctx, images, boardState) {
 
 function loadPieceImages() {
   return new Promise((resolve) => {
-    const theme = "alpha";
+    const theme = "companion";
     const pieceFiles = {
       'B': 'wB',
       'K': 'wK',
