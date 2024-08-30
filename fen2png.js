@@ -78,7 +78,7 @@ function parseFen(fen) {
 
 function draw(canvas, images, boardState) {
   const sq = 60;
-  canvas.width = 9.5*sq;
+  canvas.width = 9.8*sq;
   canvas.height = 9*sq;
   const ctx = canvas.getContext("2d");
   ctx.scale(sq, sq);
