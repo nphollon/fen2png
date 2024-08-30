@@ -1,26 +1,36 @@
 function main() {
-  const form = document.getElementById("fen-form");
-  const fenField = document.getElementById("fen-input");
-  const submit = document.getElementById("fen-submit");
-  const downloadLink = document.getElementById("download-link");
   const canvas = document.getElementById("board-canvas");
 
-  let images;
+  let images = {};
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const boardState = parseFen(fenField.value);
+  const updateBoard = () => {
+    const fenInput = document.getElementById("fen-input");
+    const boardState = parseFen(fenInput.value);
     draw(canvas, images, boardState);
+  }
 
-    downloadLink.hidden = false;
-    downloadLink.download = "a.png";
-    downloadLink.href = canvas.toDataURL();
+  const fenForm = document.getElementById("fen-form");
+  fenForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    updateBoard();
   });
 
   loadPieceImages().then((data) => {
     images = data;
-    submit.disabled = false;
+    const fenSubmit = document.getElementById("fen-submit");
+    fenSubmit.disabled = false;
+    updateBoard();
   });
+
+  const downloadForm = document.getElementById("download-form");
+  downloadForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const filenameInput = document.getElementById("filename");
+    const a = document.createElement("a");
+    a.download = filenameInput.value;
+    a.href = canvas.toDataURL();
+    a.click();
+  })
 }
 
 function parseFen(fen) {
