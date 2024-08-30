@@ -55,6 +55,9 @@ function parseFen(fen) {
       x += spacing;
       continue;
     }
+    if (x > 7 || y > 7) {
+      throw new Error("Piece placed out of bounds");
+    }
     pieces.push({  name: char,  x: x, y: y });
     x++;
   }
