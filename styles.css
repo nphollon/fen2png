@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cutive&family=Outfit&display=swap');
+
+main {
+  display: flex;
+  font-family: "Cutive", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  font-weight: normal;
+}
+
+input, button {
+  font-family: "Outfit", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+label {
+  margin-right: 1rem;
+  font-size: 1rem;
+}
+
+input {
+  margin-left: 1rem;
+  font-size: 1.3rem;
+}
+
+button {
+  font-size: 1.2rem;
+}
+
+
+#fen-input {
+  width: 30em;
+}
