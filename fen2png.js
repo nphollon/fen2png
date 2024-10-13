@@ -1,3 +1,21 @@
+const pieceTheme = "companion";
+const sq = 60;
+const borderWidth = 0.05;
+const hatchWidth = 0.025;
+const hatchDensity = 160;
+const borderColor = "#AAA29A";
+const darkSquareColor = "#DAD2CA";
+const lightSquareColor = "#FAF2EA";
+
+const indicatorX = 8.4;
+const indicatorY = 7.5;
+const indicatorWidth = 0.3;
+const indicatorLength = 0.5;
+const indicatorLineWidth = 0.075;
+const indicatorBlack = "black";
+const indicatorWhite = "white";
+
+
 function main() {
   const canvas = document.getElementById("board-canvas");
 
@@ -77,7 +95,6 @@ function parseFen(fen) {
 }
 
 function draw(canvas, images, boardState) {
-  const sq = 60;
   canvas.width = 9.8*sq;
   canvas.height = 9*sq;
   const ctx = canvas.getContext("2d");
@@ -92,25 +109,18 @@ function draw(canvas, images, boardState) {
 }
 
 function drawBoard(ctx) {
-  const darkFillBackground = "#EEE";
-  const darkFillForeground = "#444";
-  const lineDensity = 180;
-  const lineWidth = 0.025;
-  const lightFill = "#EEE";
-  const borderWidth = 0.05;
-
-  ctx.fillStyle = darkFillForeground;
+  ctx.fillStyle = borderColor;
   ctx.fillRect(-borderWidth, -borderWidth, 8+2*borderWidth, 8+2*borderWidth);
 
-  ctx.fillStyle = darkFillBackground;
+  ctx.fillStyle = darkSquareColor;
   ctx.fillRect(0, 0, 8, 8);
 
-  ctx.strokeStyle = darkFillForeground;
-  const dx = 16 / lineDensity;
+  ctx.strokeStyle = borderColor;
+  const dx = 16 / hatchDensity;
 
-  ctx.lineWidth = lineWidth;
+  ctx.lineWidth = hatchWidth;
 
-  for (let i = 0; i < lineDensity; i++) {
+  for (let i = 0; i < hatchDensity; i++) {
     ctx.beginPath();
 
     if (i * dx < 8) {
@@ -123,7 +133,7 @@ function drawBoard(ctx) {
     ctx.stroke();
   }
 
-  ctx.fillStyle = lightFill;
+  ctx.fillStyle = lightSquareColor;
 
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
@@ -136,16 +146,16 @@ function drawBoard(ctx) {
 
 function drawTurnIndicator(ctx, whiteToMove) {
   ctx.beginPath();
-  ctx.moveTo(8.4, 7.5);
-  ctx.lineTo(8.6, 6.9);
-  ctx.lineTo(8.8, 7.5);
+  ctx.moveTo(indicatorX, indicatorY);
+  ctx.lineTo(indicatorX + 0.5*indicatorWidth, indicatorY - indicatorLength);
+  ctx.lineTo(indicatorX + indicatorWidth, indicatorY);
   ctx.closePath();
 
-  ctx.strokeStyle = "black";
-  ctx.lineWidth = 0.08;
+  ctx.strokeStyle = indicatorBlack;
+  ctx.lineWidth = indicatorLineWidth;
   ctx.stroke();
 
-  ctx.fillStyle = whiteToMove ? "white" : "black";
+  ctx.fillStyle = whiteToMove ? indicatorWhite : indicatorBlack;
   ctx.fill();
 }
 
@@ -158,7 +168,6 @@ function placePieces(ctx, images, boardState) {
 
 function loadPieceImages() {
   return new Promise((resolve) => {
-    const theme = "companion";
     const pieceFiles = {
       'B': 'wB',
       'K': 'wK',
@@ -188,7 +197,7 @@ function loadPieceImages() {
       const key = entry[0];
       const img = new Image();
       img.addEventListener("load", onLoad);
-      img.src = `images/piece/${theme}/${entry[1]}.svg`;
+      img.src = `images/piece/${pieceTheme}/${entry[1]}.svg`;
       images[key] = img;
     })
   });
