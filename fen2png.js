@@ -95,10 +95,13 @@ function parseFen(fen) {
 }
 
 function draw(canvas, images, boardState) {
-  canvas.width = 9.8*sq;
-  canvas.height = 9*sq;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = 9.8*sq*dpr;
+  canvas.height = 9*sq*dpr;
+  canvas.style.width = 9.8*sq + "px";
+  canvas.style.height = 9*sq + "px";
   const ctx = canvas.getContext("2d");
-  ctx.scale(sq, sq);
+  ctx.scale(sq*dpr, sq*dpr);
   ctx.fillStyle = "white";
   ctx.fillRect(-10, -10, 20, 20);
   ctx.translate(0.5, 0.5);
